@@ -1,0 +1,10 @@
+{
+	"type": "cas",
+	"params": [],
+	"config": {
+		"login": {
+			"ssoBaseURL": "https://authentification.din.developpement-durable.gouv.fr/cas",
+			"serverBaseURL": "{CALLBACK}"
+		}
+	}
+}

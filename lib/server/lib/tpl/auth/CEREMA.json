@@ -1,0 +1,9 @@
+{
+	"type": "letmein",
+	"params": [],
+	"config": {
+		"login": {
+			"uri": "https://auth.siipro.fr/login"
+		}
+	}
+}

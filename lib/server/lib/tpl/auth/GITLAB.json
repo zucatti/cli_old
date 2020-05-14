@@ -1,0 +1,18 @@
+{
+	"type": "gitlab",
+	"params": [
+		"host",
+		"key",
+		"secret",
+		"redirect_uri"
+	],
+	"config": {
+		"login": {
+			"host": "xxx",
+			"key": "xxx",
+			"secret": "xxx",
+			"redirect_uri": "xxx",
+			"login": "http://{host}/oauth/authorize?client_id={key}&redirect_uri={redirect_uri}&response_type=code&state={secret}"
+		}
+	}
+}

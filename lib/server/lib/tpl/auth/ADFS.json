@@ -1,0 +1,19 @@
+{
+	"type": "adfs",
+	"params": [
+		"authorizationURL",
+		"tokenURL",
+		"clientID",
+		"clientSecret"
+	],
+	"config": {
+		"login": {
+			"authorizationURL": "https://adfsServer/adfs/oauth2/authorize",
+			"resource": "{HOST}",
+			"tokenURL": "https://adfsServer/adfs/oauth2/token",
+			"clientID": "",
+			"clientSecret": "",
+			"callbackURL": "{CALLBACK}"
+		}
+	}
+}

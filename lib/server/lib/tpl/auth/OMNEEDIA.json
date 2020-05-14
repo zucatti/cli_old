@@ -1,0 +1,9 @@
+{
+	"type": "omneedia",
+	"params": [],
+	"config": {
+		"login": {
+			"uri": "https://auth.omneedia.com/login"
+		}
+	}
+}

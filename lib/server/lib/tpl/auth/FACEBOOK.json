@@ -1,0 +1,13 @@
+{
+	"type": "facebook",
+	"params": [
+		"id",
+		"secret"
+	],
+	"config": {
+		"login": {
+			"id": "xxx",
+			"secret": "xxx"
+		}
+	}
+}

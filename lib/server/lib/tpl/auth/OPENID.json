@@ -1,0 +1,18 @@
+{
+	"type": "openid",
+	"params": [
+		"authorizationURL",
+		"client_id",
+		"client_secret",
+		"scope"
+	],
+	"config": {
+		"login": {
+			"authorizationURL": "",
+			"client_id": "",
+			"client_secret": "",
+			"redirect_url": "{CALLBACK}",
+			"scope": "openid"
+		}
+	}
+}

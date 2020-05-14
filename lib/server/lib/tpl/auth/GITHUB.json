@@ -1,0 +1,21 @@
+{
+	"type": "github",
+	"params": [
+		"key",
+		"secret",
+		"scope"
+	],
+	"config": {
+		"login": {
+			"key": "xxx",
+			"secret": "xxx",
+			"scope": [
+				"gitst",
+				"user",
+				"public_repo",
+				"repo",
+				"repo:status"
+			]
+		}
+	}
+}

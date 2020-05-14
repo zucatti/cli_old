@@ -1,0 +1,17 @@
+{
+	"type": "google",
+	"params": [
+		"id",
+		"secret"
+	],
+	"config": {
+		"login": {
+			"id": "",
+			"secret": "",
+			"scope": [
+				"https://www.googleapis.com/auth/userinfo.profile",
+				"https://www.googleapis.com/auth/userinfo.email"
+			]
+		}
+	}
+}

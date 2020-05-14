@@ -1,0 +1,13 @@
+{
+	"type": "twitter",
+	"params": [
+		"id",
+		"secret"
+	],
+	"config": {
+		"login": {
+			"id": "xxx",
+			"secret": "xxx"
+		}
+	}	
+}
