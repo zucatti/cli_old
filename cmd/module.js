@@ -302,7 +302,13 @@ module.exports = function (args, root) {
         })
       );
 
-      if (!args[1]) return error("You must provide a module name");
+      if (!args[1]) {
+        var counter = 1;
+        for (var i = 0; i < global.manifest.modules.length; i++) {
+          args[counter] = global.manifest.modules[i];
+          counter++;
+        }
+      }
 
       var spinner = ora("looking up registry").start();
 

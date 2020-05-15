@@ -1,5 +1,6 @@
 module.exports = function (args, root) {
   var error = require("../lib/utils/error");
+  var updateApp = require("../lib/update-app");
   global.project = {
     home: global.dir + "/src",
   };
@@ -64,7 +65,7 @@ module.exports = function (args, root) {
   };
 
   function process_i18n(cb) {
-    var i18n_dir = global.root + "/src/culture";
+    var i18n_dir = global.rootdir + "/src/culture";
     var CSS = [];
     function update_langs(langs, ndx) {
       if (!langs[ndx]) return cb();
@@ -119,7 +120,7 @@ module.exports = function (args, root) {
 
     function img(x, i, cb) {
       if (!x[i]) return cb();
-      IM.read(global.root + "/" + x[i].src, function (err, IMG) {
+      IM.read(global.rootdir + "/" + x[i].src, function (err, IMG) {
         if (err) throw err;
         if (x[i].transform.resize) {
           var values = x[i].transform["resize"].split(",");
@@ -134,12 +135,15 @@ module.exports = function (args, root) {
         }
       });
     }
-    var dist = global.root + "/bin/omneedia_modules/dist/";
-    CSSStream = fs.createWriteStream(global.root + "/dist/www/resources.css", {
-      flags: "a",
-      encoding: null,
-      mode: 0666,
-    });
+    var dist = global.rootdir + "/bin/omneedia_modules/dist/";
+    CSSStream = fs.createWriteStream(
+      global.rootdir + "/dist/www/resources.css",
+      {
+        flags: "a",
+        encoding: null,
+        mode: 0666,
+      }
+    );
 
     function loadBase64Image(ITEMS, len, cb, i) {
       if (!i) i = 0;
@@ -178,8 +182,7 @@ module.exports = function (args, root) {
               ITEMS[el] = "";
             }
           }
-          process.stdout.clearLine(); // clear current text
-          process.stdout.cursorTo(0);
+
           loadBase64Image(ITEMS, len, cb, i + 1);
         });
       } else {
@@ -199,8 +202,6 @@ module.exports = function (args, root) {
             } else {
               ITEMS[el] = "";
             }
-            process.stdout.clearLine(); // clear current text
-            process.stdout.cursorTo(0);
 
             loadBase64Image(ITEMS, len, cb, i + 1);
           }
@@ -288,12 +289,12 @@ module.exports = function (args, root) {
       var lpath;
       if (css[ndx].indexOf("/dist/") > -1) {
         var texto = css[ndx].split(
-          global.root + "/bin/omneedia_modules/dist/"
+          global.rootdir + "/bin/omneedia_modules/dist/"
         )[1];
         texto = texto.substr(0, texto.lastIndexOf("/"));
         texto = texto.replace("/", ":");
       } else {
-        var texto = css[ndx].split(global.root + "/src/resources/")[1];
+        var texto = css[ndx].split(global.rootdir + "/src/resources/")[1];
       }
       if (css[ndx].substr(0, 1) == "!") {
         var spinner = ora("processing resource: " + chalk.bold(texto));
@@ -352,7 +353,7 @@ module.exports = function (args, root) {
 
     var spin = ora("preparing assets");
 
-    fs.readFile(global.root + "/.template/assets.json", function (e, tpl) {
+    fs.readFile(global.rootdir + "/.template/assets.json", function (e, tpl) {
       if (e) return error("template not found");
 
       var tpl = mktpl(tpl.toString("utf-8"));
@@ -361,11 +362,11 @@ module.exports = function (args, root) {
       // prepare image
       img(tpl, 0, function () {
         spin.succeed("assets loaded.");
-        fs.readdir(global.root + "/src/resources", function (e, d) {
+        fs.readdir(global.rootdir + "/src/resources", function (e, d) {
           if (d) {
             for (var i = 0; i < d.length; i++) {
               if (d[i].indexOf(".css") > -1)
-                css.push("!" + global.root + "/src/resources/" + d[i]);
+                css.push("!" + global.rootdir + "/src/resources/" + d[i]);
             }
           }
           loadcss(css, 0, cb);
@@ -884,7 +885,7 @@ module.exports = function (args, root) {
       if (!files[ndx]) return cb();
       var dir = files[ndx];
       var processText = dir.split(
-        global.root + "/bin/omneedia_modules/dist/"
+        global.rootdir + "/bin/omneedia_modules/dist/"
       )[1];
       processText = processText
         .substr(0, processText.lastIndexOf("/"))
@@ -935,7 +936,7 @@ module.exports = function (args, root) {
     }
 
     var MODULES = [];
-    var dist = global.root + "/bin/omneedia_modules/dist/";
+    var dist = global.rootdir + "/bin/omneedia_modules/dist/";
     for (var i = 0; i < global.manifest.modules.length; i++) {
       var module = global.manifest.modules[i];
       if (typeof module == "string") {
@@ -999,7 +1000,7 @@ module.exports = function (args, root) {
 
     function img(x, i, cb) {
       if (!x[i]) return cb();
-      IM.read(global.root + "/" + x[i].src, function (err, IMG) {
+      IM.read(global.rootdir + "/" + x[i].src, function (err, IMG) {
         if (err) throw err;
         if (x[i].transform.resize) {
           var values = x[i].transform["resize"].split(",");
@@ -1014,7 +1015,7 @@ module.exports = function (args, root) {
         }
       });
     }
-    fs.readFile(global.root + "/.template/assets.json", function (e, tpl) {
+    fs.readFile(global.rootdir + "/.template/assets.json", function (e, tpl) {
       if (e) return error("template not found");
 
       var tpl = mktpl(tpl.toString("utf-8"));
@@ -1022,7 +1023,10 @@ module.exports = function (args, root) {
 
       // prepare image
       img(tpl, 0, function () {
-        fs.readFile(global.root + "/.template/assets.css", function (e, tpl) {
+        fs.readFile(global.rootdir + "/.template/assets.css", function (
+          e,
+          tpl
+        ) {
           if (e) throw e;
           style = tpl.toString("utf-8");
           style = mktpl(style);
@@ -1030,7 +1034,7 @@ module.exports = function (args, root) {
             var re = new RegExp(el, "g");
             style = style.replace(re, assets[el]);
           }
-          fs.readFile(global.root + "/.template/assets.html", function (
+          fs.readFile(global.rootdir + "/.template/assets.html", function (
             e,
             tpl
           ) {
@@ -1053,7 +1057,7 @@ module.exports = function (args, root) {
               "<head>",
               '<head><meta name="apple-mobile-web-app-status-bar-style" content="black">'
             );
-            IM.read(global.root + "/" + global.manifest.icon.file, function (
+            IM.read(global.rootdir + "/" + global.manifest.icon.file, function (
               err,
               im
             ) {
@@ -1084,7 +1088,11 @@ module.exports = function (args, root) {
                       }
                     );
                     spinner.succeed("built.");
-                    fs.writeFile(global.root + "/dist/www/index.html", min, cb);
+                    fs.writeFile(
+                      global.rootdir + "/dist/www/index.html",
+                      min,
+                      cb
+                    );
                   }
                 );
               });
@@ -1101,7 +1109,7 @@ module.exports = function (args, root) {
       return copyFiles(path, d, ndx + 1, cb, prefix);
     if (!prefix) prefix = "";
     var destfile =
-      global.root + "/dist/" + prefix + "/" + d[ndx].split(path)[1];
+      global.rootdir + "/dist/" + prefix + "/" + d[ndx].split(path)[1];
     var dest = require("path").dirname(destfile) + "/" + prefix;
     if (destfile.substr(destfile.lastIndexOf("."), destfile.length) == ".js")
       var spin = ora("processing: " + chalk.bold(d[ndx].split(path)[1]));
@@ -1152,7 +1160,7 @@ module.exports = function (args, root) {
     delete manifest.icon;
     delete manifest.splashscreen;
     fs.writeFile(
-      global.root + "/dist/manifest.yaml",
+      global.rootdir + "/dist/manifest.yaml",
       yaml.stringify(manifest),
       cb
     );
@@ -1175,17 +1183,21 @@ module.exports = function (args, root) {
       " ",
       'CMD ["node","server"]',
     ];
-    fs.writeFile(global.root + "/dist/Dockerfile", str.join("\n"), function () {
-      process_yaml(function () {
-        console.log(
-          "\n" + logSymbols.success + " application has been built\n"
-        );
-      });
-    });
+    fs.writeFile(
+      global.rootdir + "/dist/Dockerfile",
+      str.join("\n"),
+      function () {
+        process_yaml(function () {
+          console.log(
+            "\n" + logSymbols.success + " application has been built\n"
+          );
+        });
+      }
+    );
   }
 
   function copy_app() {
-    var path = require("path").normalize(global.root + "/src/services/");
+    var path = require("path").normalize(global.rootdir + "/src/services/");
     walk(path, function (e, d) {
       copyFiles(
         path,
@@ -1193,14 +1205,16 @@ module.exports = function (args, root) {
         0,
         function () {
           console.log(chalk.yellow.bold("\n- using auth"));
-          var path = require("path").normalize(global.root + "/src/auth/");
+          var path = require("path").normalize(global.rootdir + "/src/auth/");
           walk(path, function (e, d) {
             copyFiles(
               path,
               d,
               0,
               function () {
-                var path = require("path").normalize(global.root + "/src/io/");
+                var path = require("path").normalize(
+                  global.rootdir + "/src/io/"
+                );
                 console.log(chalk.yellow.bold("\n- using io"));
                 walk(path, function (e, d) {
                   copyFiles(
@@ -1209,7 +1223,7 @@ module.exports = function (args, root) {
                     0,
                     function () {
                       var path = require("path").normalize(
-                        global.root + "/src/jobs/"
+                        global.rootdir + "/src/jobs/"
                       );
                       walk(path, function (e, d) {
                         copyFiles(
@@ -1221,7 +1235,7 @@ module.exports = function (args, root) {
                               chalk.yellow.bold("\n- using processes")
                             );
                             var path = require("path").normalize(
-                              global.root + "/src/processes/"
+                              global.rootdir + "/src/processes/"
                             );
                             walk(path, function (e, d) {
                               copyFiles(
@@ -1233,7 +1247,7 @@ module.exports = function (args, root) {
                                     chalk.yellow.bold("\n- using system")
                                   );
                                   var path = require("path").normalize(
-                                    global.root + "/src/system/"
+                                    global.rootdir + "/src/system/"
                                   );
                                   walk(path, function (e, d) {
                                     copyFiles(
@@ -1289,13 +1303,14 @@ module.exports = function (args, root) {
         main: "index.js",
         dependencies: dependencies,
       };
+      if (!global.manifest.packages) global.manifest.packages = [];
       for (var i = 0; i < global.manifest.packages.length; i++) {
         pkg.dependencies[
           global.manifest.packages[i].split(":")[0]
         ] = global.manifest.packages[i].split(":")[1];
       }
       fs.writeFile(
-        global.root + "/dist/package.json",
+        global.rootdir + "/dist/package.json",
         JSON.stringify(pkg, null, 4),
         function (e) {
           console.log(chalk.yellow.bold("\n- installing serverside"));
@@ -1310,7 +1325,7 @@ module.exports = function (args, root) {
 
   findUp("manifest.yaml").then(function (test) {
     if (!test) return error("You must be inside an omneedia app directory");
-    global.root = path.dirname(test);
+    global.rootdir = path.dirname(test);
 
     fs.readFile(test, "utf-8", function (e, r) {
       try {
@@ -1322,7 +1337,6 @@ module.exports = function (args, root) {
         boxen(
           chalk.cyan(
             " " +
-              "App: " +
               chalk.bold(global.manifest.namespace) +
               "@" +
               chalk.bold(global.manifest.version) +
@@ -1331,45 +1345,51 @@ module.exports = function (args, root) {
           { float: "center", borderStyle: "round", borderColor: "cyan" }
         )
       );
-      if (!global.root) return error("Directory error");
-
-      rmdir(global.root + "/dist", function () {
-        fs.mkdir(
-          global.root + "/dist/www",
-          {
-            recursive: true,
-          },
-          function (e) {
-            var cmd = [];
-            streamJS = fs.createWriteStream(global.root + "/dist/www/app.js", {
-              flags: "a",
-              encoding: null,
-              mode: 0666,
-            });
-            //return serverside_build();
-            console.log(chalk.yellow.bold("\n- generating settings"));
-            process_settings(function () {
-              console.log(chalk.yellow.bold("\n- processing modules"));
-              process_js(function () {
-                console.log(chalk.yellow.bold("\n- processing MVC"));
-                process_mvc(function () {
-                  console.log(chalk.yellow.bold("\n- registering services"));
-                  process_services(function (services) {
-                    console.log(chalk.yellow.bold("\n- bundle app.js"));
-                    streamJS.write(';window.z="0mneediaRulez!";App.load();');
-                    streamJS.end(function () {
-                      console.log(
-                        chalk.yellow.bold("\n- generating index.html")
-                      );
-                      process_index(function (ndx) {
+      if (!global.rootdir) return error("Directory error");
+      updateApp(function () {
+        rmdir(global.rootdir + "/dist", function () {
+          fs.mkdir(
+            global.rootdir + "/dist/www",
+            {
+              recursive: true,
+            },
+            function (e) {
+              var cmd = [];
+              streamJS = fs.createWriteStream(
+                global.rootdir + "/dist/www/app.js",
+                {
+                  flags: "a",
+                  encoding: null,
+                  mode: 0666,
+                }
+              );
+              //return serverside_build();
+              console.log(chalk.yellow.bold("\n- generating settings"));
+              process_settings(function () {
+                console.log(chalk.yellow.bold("\n- processing modules"));
+                process_js(function () {
+                  console.log(chalk.yellow.bold("\n- processing MVC"));
+                  process_mvc(function () {
+                    console.log(chalk.yellow.bold("\n- registering services"));
+                    process_services(function (services) {
+                      console.log(chalk.yellow.bold("\n- bundle app.js"));
+                      streamJS.write(';window.z="0mneediaRulez!";App.load();');
+                      streamJS.end(function () {
                         console.log(
-                          chalk.yellow.bold("\n- generating resources")
+                          chalk.yellow.bold("\n- generating index.html")
                         );
-                        process_resources(function () {
-                          console.log(chalk.yellow.bold("\n- processing i18n"));
-                          process_i18n(function () {
-                            CSSStream.end(function () {
-                              serverside_build();
+                        process_index(function (ndx) {
+                          console.log(
+                            chalk.yellow.bold("\n- generating resources")
+                          );
+                          process_resources(function () {
+                            console.log(
+                              chalk.yellow.bold("\n- processing i18n")
+                            );
+                            process_i18n(function () {
+                              CSSStream.end(function () {
+                                serverside_build();
+                              });
                             });
                           });
                         });
@@ -1378,9 +1398,9 @@ module.exports = function (args, root) {
                   });
                 });
               });
-            });
-          }
-        );
+            }
+          );
+        });
       });
     });
   });

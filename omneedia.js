@@ -1,4 +1,4 @@
-#!/usr/bin/env node --no-warnings
+#!/usr/bin/env node
 
 /*
  * Omneedia
@@ -10,9 +10,9 @@ var chalk = require("chalk");
 var figlet = require("figlet");
 var findUp = require("find-up");
 var fs = require("fs");
-var root = require("os").homedir() + "/oa-cli";
+var rootOS = require("os").homedir() + "/oa-cli";
 
-var $_VERSION = "1.0.0";
+var $_VERSION;
 
 Array.prototype.remove = function () {
   var what,
@@ -62,7 +62,7 @@ function parseArgs(c) {
           )
             args.push(process.argv[j]);
           try {
-            return require("./cmd/" + cmd)(args, root);
+            return require("./cmd/" + cmd)(args, rootOS);
           } catch (e) {
             //console.log(e);
             if (e.code == "MODULE_NOT_FOUND")
@@ -76,7 +76,7 @@ function parseArgs(c) {
       for (var j = process.argv.indexOf(cmd) + 1; j < process.argv.length; j++)
         args.push(process.argv[j]);
       try {
-        return require("./cmd/" + cmd)(args, root);
+        return require("./cmd/" + cmd)(args, rootOS);
       } catch (e) {
         //console.log(e);
         if (e.code == "MODULE_NOT_FOUND")
@@ -344,17 +344,41 @@ var config = function (config, force) {
 };
 
 var commands = require("./lib/cmd.js");
+fs.readFile(__dirname + "/package.json", "utf-8", function (e, ab) {
+  if (e) return console.log("SYSTEM ERROR");
+  try {
+    ab = JSON.parse(ab);
+    $_VERSION = ab.version;
+  } catch (e) {
+    return console.log("SYSTEM ERROR");
+  }
 
-fs.mkdir(root, { recursive: true }, function () {
-  fs.readFile(root + "/.config", function (e, r) {
-    if (e) {
-      global.cfg = {
-        uid: require("shortid").generate(),
-        current: "default",
-        default: {},
-        configs: ["default"],
-      };
-      fs.writeFile(root + "/.config", JSON.stringify(global.cfg), function () {
+  fs.mkdir(rootOS, { recursive: true }, function () {
+    fs.readFile(rootOS + "/.config", function (e, r) {
+      if (e) {
+        global.cfg = {
+          uid: require("shortid").generate(),
+          current: "default",
+          default: {},
+          configs: ["default"],
+        };
+        fs.writeFile(
+          rootOS + "/.config",
+          JSON.stringify(global.cfg),
+          function () {
+            global.config = global.cfg[global.cfg.current];
+            var request = require("request");
+            if (global.config.proxy)
+              global.request = request.defaults({ proxy: global.config.proxy });
+            else global.request = request;
+            findUp("manifest.yaml").then(function (test) {
+              if (test) global.dir = require("path").dirname(test);
+              parseArgs(commands);
+            });
+          }
+        );
+      } else {
+        global.cfg = JSON.parse(r.toString("utf-8"));
         global.config = global.cfg[global.cfg.current];
         var request = require("request");
         if (global.config.proxy)
@@ -364,18 +388,7 @@ fs.mkdir(root, { recursive: true }, function () {
           if (test) global.dir = require("path").dirname(test);
           parseArgs(commands);
         });
-      });
-    } else {
-      global.cfg = JSON.parse(r.toString("utf-8"));
-      global.config = global.cfg[global.cfg.current];
-      var request = require("request");
-      if (global.config.proxy)
-        global.request = request.defaults({ proxy: global.config.proxy });
-      else global.request = request;
-      findUp("manifest.yaml").then(function (test) {
-        if (test) global.dir = require("path").dirname(test);
-        parseArgs(commands);
-      });
-    }
+      }
+    });
   });
 });

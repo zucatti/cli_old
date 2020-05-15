@@ -7,6 +7,7 @@ module.exports = function (args, root) {
   var upload_dir = root + "/uploads";
   var session_dir = root + "/sessions";
   var updateApp = require("../lib/update-app");
+  var findUp = require("find-up");
 
   const { fork } = require("child_process");
 
@@ -21,21 +22,17 @@ module.exports = function (args, root) {
   global.project.auth = global.project.home + "/auth";
   global.project.system = global.project.home + "/system";
   global.project.io = global.project.home + "/io";
-
-  fs.readFile(global.dir + "/manifest.yaml", "utf-8", function (e, r) {
-    if (e) return error("You must be inside an omneedia project directory");
-    global.manifest = yaml.parse(r);
-    console.log(
-      boxen(chalk.cyan(" " + manifest.namespace + " "), {
-        float: "center",
-        borderStyle: "round",
-        borderColor: "cyan",
-      })
-    );
-
-    fs.readFile(global.dir + "/config/settings.json", "utf-8", function (e, r) {
-      if (r) global.settings = JSON.parse(r);
-      else global.settings = {};
+  findUp("manifest.yaml").then(function (test) {
+    if (!test) return error("You must be inside an omneedia project directory");
+    fs.readFile(test, "utf-8", function (e, r) {
+      global.manifest = yaml.parse(r);
+      console.log(
+        boxen(chalk.cyan(" " + manifest.namespace + " "), {
+          float: "center",
+          borderStyle: "round",
+          borderColor: "cyan",
+        })
+      );
 
       updateApp(function () {
         console.log("\n- Starting " + chalk.bold(manifest.namespace));

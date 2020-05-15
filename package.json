@@ -1,28 +1,28 @@
 {
-  "_from": "oam",
-  "_id": "oam@1.0.0",
+  "_from": "@omneedia/cli",
+  "_id": "@omneedia/cli@2.0.0",
   "_inBundle": false,
-  "_integrity": "sha512-d7V1rjwEuIlOvcpyslSjzPJ0ugwskBn80FEKVZ6BZ+pzC0ZjEGg2zCuJuam4H+Y3sUkTgyXqpOEjfd311IJG8w==",
-  "_location": "/oam",
+  "_integrity": "sha512-dbiZpduHU2MhingTBzm2NXPD7lnPc1QEw3gxNjrXPT2adWIE9nnOBT0h5Y0unYLpA+Za1ajkfaer0sTDuDQeow==",
+  "_location": "/@omneedia/cli",
   "_phantomChildren": {},
   "_requested": {
     "type": "tag",
     "registry": true,
-    "raw": "oam",
-    "name": "oam",
-    "escapedName": "oam",
+    "raw": "@omneedia/cli",
+    "name": "@omneedia/cli",
+    "escapedName": "@omneedia%2fcli",
+    "scope": "@omneedia",
     "rawSpec": "",
     "saveSpec": null,
     "fetchSpec": "latest"
   },
   "_requiredBy": [
-    "#USER",
-    "/"
+    "#USER"
   ],
-  "_resolved": "https://registry.npmjs.org/oam/-/oam-1.0.0.tgz",
-  "_shasum": "0aa37db7a332ebf423ae2c382ee562ccae89aab0",
-  "_spec": "oam",
-  "_where": "/Users/stephanezucatti/.npm-global/lib/node_modules/oam",
+  "_resolved": "https://registry.npmjs.org/@omneedia/cli/-/cli-2.0.0.tgz",
+  "_shasum": "e8f93d23c61aef5ee7de8e6cc8af5139d2b53daf",
+  "_spec": "@omneedia/cli",
+  "_where": "/Users/stephanezucatti/projects/frameworks/@omneedia/cli",
   "author": {
     "name": "Stéphane Zucatti"
   },
@@ -88,5 +88,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "2.0.0"
+  "version": "2.0.6"
 }
